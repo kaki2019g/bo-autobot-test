@@ -1,0 +1,129 @@
+﻿<!doctype html>
+<html lang="ja" class="no-js no-svg">
+
+<head>
+  <script src="../assets/js/tracking.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>購入手続き｜BO-AutoBot</title>
+  <meta name="description" content="購入手続きページです。">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://bo-autobot.jp/checkout/checkout.html">
+  <meta property="og:title" content="購入手続き｜BO-AutoBot">
+  <meta property="og:description" content="購入手続きページです。">
+  <meta property="og:url" content="https://bo-autobot.jp/checkout/checkout.html">
+  <meta property="og:image" content="https://bo-autobot.jp/assets/img/home/cta-img01.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="BO-AutoBot">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="購入手続き｜BO-AutoBot">
+  <meta name="twitter:description" content="購入手続きページです。">
+  <meta name="twitter:image" content="https://bo-autobot.jp/assets/img/home/cta-img01.png">
+  <link rel="icon" href="../assets/img/common/favicon.ico">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PQ8S3354" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <header id="site-header"></header>
+  <main id="l-main" class="l-main p-checkout">
+    <div class="l-inner">
+      <div class="woocommerce">
+        <div class="p-checkout__top">
+          <h1 class="sec-h2" id="checkout-title">購入手続き</h1>
+        </div>
+        <form name="checkout" class="checkout woocommerce-checkout" action="https://script.google.com/macros/s/AKfycbwGIG3xED_9bl7om-nmmFoZXMfysYAYUe470UFf3-1qaFMXsubahMdWBJT08ZcMu5I/exec" method="post" data-default-payment="bank_transfer" data-gas-endpoint-test="https://script.google.com/macros/s/AKfycbzemnbj6tWIt2ljWaLyX8aqS9VyufA7z_QoH-FLcDiL13DBGnx5M9Ni_1ziS_y0aA/exec" data-gas-endpoint-prod="https://script.google.com/macros/s/AKfycbwGIG3xED_9bl7om-nmmFoZXMfysYAYUe470UFf3-1qaFMXsubahMdWBJT08ZcMu5I/exec">
+          <input type="hidden" name="action" value="create_order">
+          <input type="hidden" name="source" value="checkout">
+          <input type="hidden" name="product_id" value="bo-autobot">
+          <input type="hidden" name="product_name" value="BO-AutoBot">
+          <input type="hidden" name="amount" value="20000">
+          <input type="hidden" name="currency" value="JPY">
+          <div id="customer_details" class="col2-set">
+            <div class="col-1">
+              <div class="woocommerce-billing-fields">
+                <h3>購入者情報</h3>
+                <p class="form-row form-row-first">
+                  <label for="billing_first_name">名&nbsp;<span class="required">*</span></label>
+                  <input type="text" class="input-text" name="billing_first_name" id="billing_first_name" required>
+                </p>
+                <p class="form-row form-row-last">
+                  <label for="billing_last_name">姓&nbsp;<span class="required">*</span></label>
+                  <input type="text" class="input-text" name="billing_last_name" id="billing_last_name" required>
+                </p>
+                <p class="form-row form-row-wide">
+                  <label for="billing_email">メールアドレス&nbsp;<span class="required">*</span></label>
+                  <input type="email" class="input-text" name="billing_email" id="billing_email" required>
+                </p>
+                <p class="form-row form-row-wide">
+                  <label for="order_comments">備考</label>
+                  <textarea name="order_comments" class="input-text" id="order_comments" rows="4"></textarea>
+                </p>
+              </div>
+            </div>
+          </div>
+          <h3 id="order_review_heading">ご注文内容</h3>
+          <div id="order_review" class="woocommerce-checkout-review-order">
+            <table class="shop_table woocommerce-checkout-review-order-table">
+              <thead>
+                <tr>
+                  <th class="product-name">商品</th>
+                  <th class="product-total">小計</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="cart_item">
+                  <td class="product-name">
+                    <span data-checkout-product-name>BO-AutoBot</span>&nbsp;<strong class="product-quantity">×&nbsp;1</strong>
+                  </td>
+                  <td class="product-total" data-checkout-amount>¥20,000</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr class="cart-subtotal">
+                  <th>小計</th>
+                  <td data-checkout-amount>¥20,000</td>
+                </tr>
+                <tr class="order-total">
+                  <th>合計</th>
+                  <td><strong data-checkout-amount>¥20,000</strong></td>
+                </tr>
+              </tfoot>
+            </table>
+            <div id="payment" class="woocommerce-checkout-payment">
+              <ul class="wc_payment_methods payment_methods methods">
+                <li class="wc_payment_method payment_method_bacs is-disabled">
+                  <input id="payment_method_bacs" type="radio" class="input-radio" name="payment_method" value="bank_transfer" required disabled aria-disabled="true">
+                  <label for="payment_method_bacs">銀行振込</label>
+                  <p class="payment_note">振込案内はご注文後にメールでお送りします。</p>
+                </li>
+                <li class="wc_payment_method payment_method_cod">
+                  <input id="payment_method_card" type="radio" class="input-radio" name="payment_method" value="paypal" checked>
+                  <label for="payment_method_card">クレジットカード（PayPal）</label>
+                  <p class="payment_note">PayPal決済画面へ移動します（カードのみでも利用可）。</p>
+                </li>
+              </ul>
+              <p class="p-checkout__note">銀行振込はJavaScriptが必要です。</p>
+              <noscript>
+                <p class="p-checkout__noscript">JavaScriptが無効のため銀行振込はご利用いただけません。PayPal決済をご利用ください。</p>
+              </noscript>
+              <div class="form-row place-order">
+                <button type="submit" class="button alt">注文を確定する</button>
+                <p class="p-checkout__agree-note">注文を確定することにより、<a href="/info/terms.html">利用規約</a>に同意したとみなされます。</p>
+                <p class="checkout-message" id="checkout-message" aria-live="polite"></p>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+  <footer id="site-footer"></footer>
+<script src="../assets/js/include.js"></script>
+<script src="../assets/js/checkout.js"></script>
+</body>
+
+</html>

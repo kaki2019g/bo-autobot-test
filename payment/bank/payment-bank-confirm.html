@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ja" class="no-js no-svg">
+
+<head>
+  <script src="../../assets/js/tracking.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>注文内容の確認｜BO-AutoBot</title>
+  <meta name="description" content="注文内容の確認ページです。">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://bo-autobot.jp/payment/bank/payment-bank-confirm.html">
+  <meta property="og:title" content="注文内容の確認｜BO-AutoBot">
+  <meta property="og:description" content="注文内容の確認ページです。">
+  <meta property="og:url" content="https://bo-autobot.jp/payment/bank/payment-bank-confirm.html">
+  <meta property="og:image" content="https://bo-autobot.jp/assets/img/home/cta-img01.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="BO-AutoBot">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="注文内容の確認｜BO-AutoBot">
+  <meta name="twitter:description" content="注文内容の確認ページです。">
+  <meta name="twitter:image" content="https://bo-autobot.jp/assets/img/home/cta-img01.png">
+  <link rel="icon" href="../../assets/img/common/favicon.ico">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PQ8S3354" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <header id="site-header"></header>
+  <main id="l-main">
+    <div class="l-container p-contact">
+      <div class="l-inner">
+        <div class="p-contact__top">
+          <h1 class="p-contact__h2 sec-h2">注文内容の確認</h1>
+        </div>
+
+        <p class="p-contact__lead">以下の内容で申し込みを確定します。よろしければ「注文を確定する」を押してください。</p>
+        <p class="p-contact__error" id="payment-error" role="alert"></p>
+
+        <form class="wpcf7-form" action="/payment/bank/payment-bank-done.html" method="get" data-gas-endpoint-test="https://script.google.com/macros/s/AKfycbzemnbj6tWIt2ljWaLyX8aqS9VyufA7z_QoH-FLcDiL13DBGnx5M9Ni_1ziS_y0aA/exec" data-gas-endpoint-prod="https://script.google.com/macros/s/AKfycbwGIG3xED_9bl7om-nmmFoZXMfysYAYUe470UFf3-1qaFMXsubahMdWBJT08ZcMu5I/exec">
+          <input type="hidden" name="source" value="bank_confirm">
+          <input type="hidden" name="action">
+          <input type="hidden" name="product_id">
+          <input type="hidden" name="product_name">
+          <input type="hidden" name="amount">
+          <input type="hidden" name="currency">
+          <input type="hidden" name="payment_method">
+          <input type="hidden" name="billing_first_name">
+          <input type="hidden" name="billing_last_name">
+          <input type="hidden" name="billing_email">
+          <input type="hidden" name="order_comments">
+          <table class="p-contact__confirm">
+            <tr>
+              <th>お名前</th>
+              <td data-field="customer-name"></td>
+            </tr>
+            <tr>
+              <th>メールアドレス</th>
+              <td data-field="billing_email"></td>
+            </tr>
+            <tr>
+              <th>商品名</th>
+              <td data-field="product_name"></td>
+            </tr>
+            <tr>
+              <th>金額</th>
+              <td data-field="amount"></td>
+            </tr>
+            <tr>
+              <th>備考</th>
+              <td data-field="order_comments"></td>
+            </tr>
+          </table>
+          <div class="submit">
+            <button type="button" class="wpcf7-submit" id="back-button">修正する</button>
+            <button type="submit" class="wpcf7-submit">注文を確定する</button>
+            <p class="p-contact__loading" id="payment-loading" aria-live="polite">送信中です…</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+  <footer id="site-footer"></footer>
+  <script src="../../assets/js/include.js"></script>
+  <script src="../../assets/js/payment-bank-confirm.js"></script>
+</body>
+
+</html>

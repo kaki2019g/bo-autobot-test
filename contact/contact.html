@@ -1,0 +1,95 @@
+﻿<!doctype html>
+<html lang="ja" class="no-js no-svg">
+
+<head>
+  <script src="../assets/js/tracking.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お問い合わせ｜BO-AutoBot</title>
+  <meta name="description" content="BO-AutoBotへのお問い合わせはこちら。製品・導入・不具合・提携などお気軽にご相談ください。">
+  <link rel="canonical" href="https://bo-autobot.jp/contact/contact.html">
+  <meta property="og:title" content="お問い合わせ｜BO-AutoBot">
+  <meta property="og:description" content="BO-AutoBotへのお問い合わせはこちら。製品・導入・不具合・提携などお気軽にご相談ください。">
+  <meta property="og:url" content="https://bo-autobot.jp/contact/contact.html">
+  <meta property="og:image" content="https://bo-autobot.jp/assets/img/home/cta-img01.png">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="BO-AutoBot">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="お問い合わせ｜BO-AutoBot">
+  <meta name="twitter:description" content="BO-AutoBotへのお問い合わせはこちら。製品・導入・不具合・提携などお気軽にご相談ください。">
+  <meta name="twitter:image" content="https://bo-autobot.jp/assets/img/home/cta-img01.png">
+  <link rel="icon" href="../assets/img/common/favicon.ico">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PQ8S3354" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <header id="site-header"></header>
+  <main id="l-main">
+    <div class="l-container p-contact">
+      <div class="l-inner">
+        <div class="p-contact__top">
+          <h1 class="p-contact__h2 sec-h2">お問い合わせ</h1>
+        </div>
+
+        <noscript>
+          <p class="p-contact__noscript">JavaScriptが無効のため確認画面へ進めません。お手数ですがJavaScriptを有効にして再度お試しください。</p>
+        </noscript>
+
+        <form class="wpcf7-form" action="/contact/contact-confirm.html"" method="post">
+          <input type="hidden" name="source" value="contact">
+          <table>
+            <tr>
+              <th>お名前<span>必須</span></th>
+              <td><input type="text" class="wpcf7-text" name="your-name" required></td>
+            </tr>
+            <tr>
+              <th>メールアドレス<span>必須</span></th>
+              <td><input type="email" class="wpcf7-text" name="your-email" required></td>
+            </tr>
+            <tr>
+              <th>お問い合わせ内容<span>必須</span></th>
+              <td class="select">
+                <select class="wpcf7-select" name="your-subject" required>
+                  <option value="">選択してください</option>
+                  <option value="サービス全般に関するお問い合わせ">サービス全般に関するお問い合わせ</option>
+                  <option value="製品に関するお問い合わせ">製品に関するお問い合わせ</option>
+                  <option value="お支払いに関するお問い合わせ">お支払いに関するお問い合わせ</option>
+                  <option value="不具合に関するお問い合わせ">不具合に関するお問い合わせ</option>
+                  <option value="開発・販売・提携・アフィリエイトに関するお問い合わせ">開発・販売・提携・アフィリエイトに関するお問い合わせ</option>
+                  <option value="お手元のサインツールが本システムに対応しているか知りたい">お手元のサインツールが本システムに対応しているか知りたい</option>
+                  <option value="その他">その他</option>
+                </select>
+              </td>
+            </tr>
+            <tr class="slide" id="signal-upload-row">
+              <th>サインツール<span>必須</span></th>
+              <td>
+                <div class="display">
+                  <input type="file" class="wpcf7-text" name="signal-file" accept=".zip">
+                  <p class="p-contact__note">※サインツールはzip形式に変換してからアップロードしてください（5MBまで）。</p>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th>お問い合わせ詳細<span>必須</span></th>
+              <td><textarea name="your-message" rows="8" required></textarea></td>
+            </tr>
+          </table>
+          <div class="submit">
+            <button type="submit" class="wpcf7-submit">送信する</button>
+            <p class="p-contact__agree-note">送信することにより、<a href="/info/privacypolicy.html">プライバシーポリシー</a>に同意したとみなされます。</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+  <footer id="site-footer"></footer>
+  <script src="../assets/js/include.js"></script>
+  <script src="../assets/js/contact.js"></script>
+</body>
+
+</html>
