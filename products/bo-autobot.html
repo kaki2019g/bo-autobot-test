@@ -64,41 +64,49 @@
         </div>
         <table class="p-item-table">
           <tr>
-            <th>対応項目・取引業者</th>
+            <th>対応取引業者</th>
             <td>ザオプション</td>
           </tr>
           <tr>
-            <th>判定時間</th>
-            <td>取引サイトに依存</td>
+            <th>対応オプション</th>
+            <td>HighLow/短期/スプレッドHighLow/スプレッド短期</td>
           </tr>
           <tr>
-            <th>通貨ペア</th>
-            <td>ザオプション</td>
+            <th>対応取引時間</th>
+            <td>15秒/30秒/1分/3分/5分/15分<sup class="p-item-annotation"><a href="#note-15min">[1]</a></sup>/1時間</td>
           </tr>
           <tr>
-            <th>検知可能なサイン</th>
-            <td>バッファ型、オブジェクト型<br>
-              ※サインの型が分からない場合は、個別対応可能です。フォームよりお問い合わせください。</td>
-          </tr>
-          <tr>
-            <th>推奨動作環境</th>
-            <td>OS：Windows10(64bit) <br>
-                CPU：2.6GHz <br>
-                メモリ：4GB <br>
+            <th>対応通貨ペア</th>
+            <td>
+              AUDJPY　AUDUSD　CADJPY　CHFJPY<br>
+              EURAUD　EURGBP　EURJPY　EURUSD<br>
+              GBPAUD　GBPJPY　GBPUSD　NZDJPY<br>
+              NZDUSD　USDCAD　USDCHF　USDJPY<br>
+              BTCUSD　ETHUSD
             </td>
           </tr>
           <tr>
-            <th>その他</th>
-            <td>・エントリー金額変更可能 <br>
+            <th>検知可能なサイン</th>
+            <td>バッファ型/オブジェクト型<sup class="p-item-annotation"><a href="#note-sign">[2]</a></sup></td>
+          </tr>
+          <tr>
+            <th>その他の機能</th>
+            <td>
+              ・エントリー金額変更可能 <br>
               ・アラート通知可能 <br>
-              ・メール通知可能 <br>
-              ・マーチン可能（2回まで）<br>
-              ・エントリー停止時間の設定（経済指標の前後で停止できます）<br>
-              ・2種類のエントリーモード（サイン点灯→即エントリー／サイン点灯のまま足確定→エントリー）<br>
+              ・マーチン可能（5回まで）<br>
+              ・エントリー停止時間の設定<br>
+              ・2種類のエントリーモード<br>
+                　1.サイン点灯後、即エントリー<br>
+                　2.サイン点灯状態で足確定後、エントリー<br>
               ・フライングエントリー可能（ローソク足確定数秒前のエントリー）
             </td>
           </tr>
         </table>
+        <div class="p-item-annotations" aria-label="注釈">
+          <p id="note-15min" class="p-item-annotations__item"><span class="p-item-annotations__label">[1]</span>15分には短期/中期/長期の3つのカテゴリがあります。</p>
+          <p id="note-sign" class="p-item-annotations__item"><span class="p-item-annotations__label">[2]</span>サインの型が分からない場合は、お問い合わせください。</p>
+        </div>
         <div class="p-item-demo">
           <a href="/products/bo-autobot-demo.html" aria-label="デモはこちら"></a>
         </div>
