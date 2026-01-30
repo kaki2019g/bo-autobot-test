@@ -2478,6 +2478,14 @@ button {
 .p-item-top__image {
   width: 50%;
 }
+.p-item-top__image-button {
+  display: block;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
 @media screen and (max-width: 768px) {
   .p-item-top__image {
     width: 100%;
@@ -2487,6 +2495,55 @@ button {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.p-item-image-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 2000;
+}
+.p-item-image-modal.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.p-item-image-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+}
+.p-item-image-modal__content {
+  position: relative;
+  max-width: 92vw;
+  max-height: 92vh;
+}
+.p-item-image-modal__content img {
+  width: 100%;
+  height: auto;
+  max-height: 92vh;
+  object-fit: contain;
+  background: #fff;
+}
+.p-item-image-modal__close {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  color: #333;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.is-modal-open {
+  overflow: hidden;
 }
 .p-item-top__text {
   flex: 1;
@@ -2627,6 +2684,17 @@ button {
 @media screen and (max-width: 768px) {
   .p-item-table td {
     width: 100%;
+  }
+}
+@media screen and (min-width: 769px) {
+  .p-item-table {
+    width: 800px;
+  }
+  .p-item-table th {
+    width: 26%;
+  }
+  .p-item-table td {
+    width: 74%;
   }
 }
 .p-item-annotation {

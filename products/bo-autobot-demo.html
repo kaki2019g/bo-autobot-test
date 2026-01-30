@@ -33,7 +33,9 @@
       <div class="l-inner">
         <div class="p-item-top">
           <div class="p-item-top__image">
-            <img src="../assets/img/item/demo.png" alt="BO-AutoBot デモ版のイメージ">
+            <button type="button" class="p-item-top__image-button" data-item-image aria-label="商品画像を拡大表示">
+              <img src="../assets/img/item/product-image.png" alt="BO-AutoBot デモ版のイメージ">
+            </button>
           </div>
           <div class="p-item-top__text">
             <h1 class="p-item-top__text--name">BO-AutoBot デモ版</h1>
@@ -59,11 +61,19 @@
             </div>
           </div>
         </div>
+        <div class="p-item-image-modal" aria-hidden="true">
+          <div class="p-item-image-modal__overlay" data-modal-close></div>
+          <div class="p-item-image-modal__content" role="dialog" aria-modal="true" aria-label="商品画像拡大">
+            <button type="button" class="p-item-image-modal__close" data-modal-close aria-label="閉じる">×</button>
+            <img src="../assets/img/item/product-image.png" alt="BO-AutoBot デモ版のイメージ" data-modal-image>
+          </div>
+        </div>
       </div>
     </section>
   </main>
   <footer id="site-footer"></footer>
   <script src="../assets/js/include.js"></script>
+  <script src="../assets/js/bo-autobot.js"></script>
 </body>
 
 </html>
