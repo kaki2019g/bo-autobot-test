@@ -3582,7 +3582,7 @@ button {
 }
 @media screen and (max-width: 768px) {
   .p-checkout__top {
-    text-align: left;
+    text-align: center;
   }
 }
 .p-checkout__note {

@@ -268,6 +268,7 @@ function handleBankOrder_(payload) {
 
 // 銀行振込注文の自動返信メールを送信する。
 function sendBankOrderAutoReply_(customer, orderId, payload) {
+  // メンテナンス: 利用期間・更新ルールの案内文をメール本文に含める
   if (!customer || !customer.email) {
     logWarn_('sendBankOrderAutoReply skipped: missing email', {});
     return;
@@ -280,6 +281,7 @@ function sendBankOrderAutoReply_(customer, orderId, payload) {
     '注文番号: ' + orderId,
     '商品名: ' + (payload.product_name || ''),
     '金額: ¥' + Number(payload.amount || 0).toLocaleString('ja-JP'),
+    '利用期間: 決済日から1年間（自動更新なし／更新は再購入）',
     'お支払い方法: 銀行振込',
     '',
     '振込先のご案内は別メールでお送りしております。',
@@ -551,6 +553,7 @@ function getOrderSheet_(config) {
 
 // 銀行振込の案内メールを送信する。
 function sendBankTransferEmail_(config, customer) {
+  // メンテナンス: 利用期間・更新ルールの案内文をメール本文に含める
   logInfo_('sendBankTransferEmail', { email: maskEmail_(customer.email) });
   var subject = '【BO-AutoBot】銀行振込のご案内';
   var body = customer.last_name + ' ' + customer.first_name + ' 様\n\n' +
@@ -560,6 +563,7 @@ function sendBankTransferEmail_(config, customer) {
     '口座種別：' + config.BANK_TYPE + '\n' +
     '口座番号：' + config.BANK_NUMBER + '\n' +
     '口座名義：' + config.BANK_HOLDER + '\n\n' +
+    '利用期間は決済日から1年間です（自動更新なし／更新は再購入）。\n' +
     'お振込は原則3日以内にお手続きいただけますと幸いです。\n' +
     'お振込の確認後、入力いただいたメールアドレス宛にダウンロードリンクを記載したメールをお送りいたします。\n' +
     'お振込確認は毎日行っておりますが、確認のタイミングによってはご連絡が遅れる場合がございます。\n' +
@@ -783,6 +787,7 @@ function resolveDownloadConfig_(config, productId) {
 
 // 商品ダウンロード案内メールを送信する。
 function sendProductEmail_(config, email, name, productId) {
+  // メンテナンス: 利用期間・更新ルールの案内文をメール本文に含める
   logInfo_('sendProductEmail', { email: maskEmail_(email) });
   var download = resolveDownloadConfig_(config, productId);
   var subject = '【BO-AutoBot】商品送付のご案内';
@@ -790,12 +795,14 @@ function sendProductEmail_(config, email, name, productId) {
     'BO-AutoBotのご購入ありがとうございます。\n' +
     '以下より商品をお受け取りください。\n\n' +
     'ダウンロードURL：\n' + download.url + '\n\n' +
+    '利用期間は決済日から1年間です（自動更新なし／更新は再購入）。\n' +
     'ご不明点がございましたらお問い合わせください。';
   GmailApp.sendEmail(email, subject, body);
 }
 
 // PayPal決済完了時に手動送付の案内メールを送信する。
 function sendPaypalHoldEmail_(email, name) {
+  // メンテナンス: 利用期間・更新ルールの案内文をメール本文に含める
   if (!email) {
     return;
   }
@@ -804,6 +811,7 @@ function sendPaypalHoldEmail_(email, name) {
   var body = (name || '') + ' 様\n\n' +
     'ご注文ありがとうございます。\n' +
     '決済が正常に行われているか確認でき次第、ダウンロードリンクをお送りします。\n' +
+    '利用期間は決済日から1年間です（自動更新なし／更新は再購入）。\n' +
     '手動での確認になりますので、送付まで少々お時間をいただく場合があります。\n' +
     '2日以上経ってもメールが届かない場合はお問い合わせください。\n\n' +
     'ご不明点がございましたらお問い合わせください。';
