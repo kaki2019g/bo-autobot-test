@@ -41,12 +41,13 @@
     try {
       const res = await fetch(withBase("assets/config/gas-env.json"), { cache: "no-cache" });
       if (!res.ok) {
-        return "prod";
+        return { env: "prod", lastCommitAt: "" };
       }
       const json = await res.json();
-      return json && (json.env === "test" || json.env === "prod") ? json.env : "prod";
+      const env = json && (json.env === "test" || json.env === "prod") ? json.env : "prod";
+      return { env, lastCommitAt: json && json.last_commit_at ? json.last_commit_at : "" };
     } catch (err) {
-      return "prod";
+      return { env: "prod", lastCommitAt: "" };
     }
   };
 
@@ -65,21 +66,30 @@
     });
   };
 
-  const gasEnv = await resolveGasEnv();
-  applyGasEndpoints(gasEnv);
+  const gasConfig = await resolveGasEnv();
+  applyGasEndpoints(gasConfig.env);
 
   // テスト環境のみ全ページにバッジを表示する。
-  const showEnvBadge = (env) => {
-    if (env !== "test") {
+  const formatCommitTime = (value) => {
+    if (!value) {
+      return "";
+    }
+    const match = String(value).match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})/);
+    return match ? `${match[1]} ${match[2]}` : String(value);
+  };
+
+  const showEnvBadge = (config) => {
+    if (!config || config.env !== "test") {
       return;
     }
     const badge = document.createElement("div");
     badge.className = "env-badge env-badge--test";
-    badge.textContent = "テスト環境";
+    const lastCommit = formatCommitTime(config.lastCommitAt);
+    badge.textContent = lastCommit ? `テスト環境 / 最終更新: ${lastCommit}` : "テスト環境";
     document.body.appendChild(badge);
   };
 
-  showEnvBadge(gasEnv);
+  showEnvBadge(gasConfig);
 
   // ルート参照のリンク/画像パスをベースパスへ置き換える。
   const updateRootLinks = () => {
