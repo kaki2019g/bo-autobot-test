@@ -107,15 +107,23 @@
         throw new Error('Request failed');
       }
       return response.json();
-    }).then(function() {
+    }).then(function(result) {
+      if (!result || !result.ok) {
+        var error = result && result.error ? result.error : 'request_failed';
+        throw new Error(error);
+      }
       // 送信成功時はセッションデータを破棄して完了画面へ遷移する。
       try {
         sessionStorage.removeItem('contactFormData');
       } catch (err) {
       }
       window.location.href = doneUrl;
-    }).catch(function() {
-      alert('送信に失敗しました。時間をおいて再度お試しください。');
+    }).catch(function(err) {
+      if (err && err.message === 'invalid_attachment') {
+        alert('添付ファイルの形式が無効です');
+      } else {
+        alert('送信に失敗しました。時間をおいて再度お試しください。');
+      }
       form.dataset.submitting = 'false';
       if (loading) {
         loading.style.display = 'none';

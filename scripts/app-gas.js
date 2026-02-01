@@ -8,6 +8,15 @@ const CONTACT_TIMEZONE = 'Asia/Tokyo';
 const CONTACT_REQUIRED_FIELDS = ['your-name', 'your-email', 'your-subject', 'your-message'];
 const LOG_VERBOSE = true;
 const ORDER_TOKEN_TTL_MS = 10 * 60 * 1000;
+const ATTACHMENT_MAX_BYTES = 5 * 1024 * 1024;
+const ATTACHMENT_ALLOWED_MIME = [
+  'application/pdf',
+  'application/zip',
+  'image/png',
+  'image/jpeg',
+  'application/octet-stream'
+];
+const ATTACHMENT_ALLOWED_EXT = ['.pdf', '.zip', '.png', '.jpg', '.jpeg', '.ex4'];
 
 // メンテナンス: 商品カタログとクーポンをスプレッドシートで管理する
 const PRODUCT_COLUMNS = {
@@ -81,6 +90,14 @@ function handleContact_(params) {
   if (missing.length > 0) {
     logWarn_('handleContact missing fields', { missing: missing });
     return jsonResponse_({ ok: false, error: 'missing_fields', fields: missing });
+  }
+
+  if (params['signal-file-data'] || params['signal-file-name']) {
+    var attachmentCheck = validateAttachment_(params['signal-file-data'], params['signal-file-name']);
+    if (!attachmentCheck.ok) {
+      logWarn_('handleContact invalid attachment', { error: attachmentCheck.error });
+      return jsonResponse_({ ok: false, error: 'invalid_attachment' });
+    }
   }
 
   var now = new Date();
@@ -234,13 +251,50 @@ function buildAttachmentBlob_(dataUrl, filename) {
       return null;
     }
     var contentType = parts[0].match(/data:(.*);base64/);
-    var mime = contentType && contentType[1] ? contentType[1] : 'application/zip';
+    var mime = contentType && contentType[1] ? contentType[1] : 'application/octet-stream';
     var bytes = Utilities.base64Decode(parts[1]);
     return Utilities.newBlob(bytes, mime, filename);
   } catch (err) {
     logWarn_('buildAttachmentBlob failed', { error: String(err) });
     return null;
   }
+}
+
+// 添付ファイルの検証を行う。
+function validateAttachment_(dataUrl, filename) {
+  if (!dataUrl || !filename) {
+    return { ok: false, error: 'missing_attachment' };
+  }
+  var parts = String(dataUrl).split(',');
+  if (parts.length < 2) {
+    return { ok: false, error: 'invalid_data_url' };
+  }
+  var meta = parts[0];
+  var contentTypeMatch = meta.match(/data:(.*);base64/);
+  var mime = contentTypeMatch && contentTypeMatch[1] ? contentTypeMatch[1] : 'application/octet-stream';
+  var ext = getFileExtension_(filename);
+  if (!isAllowedMime_(mime) || !isAllowedExt_(ext)) {
+    return { ok: false, error: 'invalid_attachment_type' };
+  }
+  var bytes = Utilities.base64Decode(parts[1]);
+  if (bytes.length > ATTACHMENT_MAX_BYTES) {
+    return { ok: false, error: 'attachment_too_large' };
+  }
+  return { ok: true };
+}
+
+function getFileExtension_(filename) {
+  var lower = String(filename || '').toLowerCase();
+  var idx = lower.lastIndexOf('.');
+  return idx !== -1 ? lower.slice(idx) : '';
+}
+
+function isAllowedMime_(mime) {
+  return ATTACHMENT_ALLOWED_MIME.indexOf(String(mime || '').toLowerCase()) !== -1;
+}
+
+function isAllowedExt_(ext) {
+  return ATTACHMENT_ALLOWED_EXT.indexOf(String(ext || '').toLowerCase()) !== -1;
 }
 
 // 銀行振込注文の登録・通知を行う。
