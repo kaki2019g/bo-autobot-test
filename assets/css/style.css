@@ -1712,7 +1712,7 @@ button {
 }
 .p-contact table {
   width: 80%;
-  margin: 80px auto 0;
+  margin: 40px auto 0;
 }
 .p-contact__confirm {
   max-width: 560px;
@@ -2250,7 +2250,7 @@ button {
   display: block;
 }
 .p-news .p-contact__top {
-  margin-bottom: 24px;
+  margin-bottom: 40px;
 }
 .p-news__list--updates .p-news__item {
   display: flex;
