@@ -762,7 +762,10 @@ button {
 }
 @media screen and (max-width: 768px) {
   .l-footer-bottom__flex {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 16px;
+    align-items: start;
   }
 }
 .l-footer-bottom__logo {
@@ -776,8 +779,10 @@ button {
 }
 @media screen and (max-width: 768px) {
   .l-footer-bottom__sns {
-    width: 100%;
     gap: 20px;
+    width: auto;
+    grid-column: 2;
+    grid-row: 2;
   }
 }
 @media screen and (max-width: 768px) {
@@ -811,9 +816,11 @@ button {
 }
 @media screen and (max-width: 768px) {
   .l-footer-bottom__spec {
-    width: 100%;
+    width: auto;
     max-width: none;
-    margin: 15px 0 0;
+    margin: 0;
+    grid-column: 1;
+    grid-row: 2;
   }
 }
 @media screen and (max-width: 768px) {
