@@ -1,5 +1,6 @@
 ﻿(function() {
   // メンテナンス: 商品情報とクーポンコードを注文ペイロードへまとめる
+  // メンテナンス: 注文トークンをGASで発行して改ざん検知に使う
   // 支払い方法の選択と確認画面への遷移を制御する。
   var form = document.querySelector(".woocommerce-checkout");
   if (!form) {
@@ -113,6 +114,36 @@
     window.location.href = new URL(path, window.location.href).toString();
   }
 
+  // トークン発行リクエストを行う。
+  function issueOrderToken(payload) {
+    var endpoint = form.getAttribute("data-gas-endpoint");
+    if (!endpoint || endpoint.indexOf("script.google.com") === -1) {
+      return Promise.reject(new Error("invalid_endpoint"));
+    }
+    var params = new URLSearchParams();
+    params.set("action", "issue_token");
+    params.set("product_id", payload.product_id || "");
+    params.set("coupon_code", payload.coupon_code || "");
+    return fetch(endpoint, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+      },
+      body: params.toString()
+    }).then(function(response) {
+      if (!response.ok) {
+        throw new Error("token_request_failed");
+      }
+      return response.json();
+    }).then(function(result) {
+      if (!result || !result.ok || !result.token) {
+        throw new Error("token_invalid");
+      }
+      return result.token;
+    });
+  }
+
   form.addEventListener("submit", function(event) {
     var selected = form.querySelector('input[name="payment_method"]:checked');
     if (!selected) {
@@ -137,8 +168,17 @@
         return;
       }
 
-      showMessage("");
-      goToConfirmPage("/payment/bank/payment-bank-confirm.html");
+      issueOrderToken(payload).then(function(token) {
+        payload.order_token = token;
+        if (!saveOrderData("bankOrderData", payload)) {
+          showMessage("ブラウザの設定により注文内容の確認画面へ進めません。", true);
+          return;
+        }
+        showMessage("");
+        goToConfirmPage("/payment/bank/payment-bank-confirm.html");
+      }).catch(function() {
+        showMessage("注文の確認準備に失敗しました。時間をおいて再度お試しください。", true);
+      });
       return;
     }
 
@@ -157,8 +197,17 @@
         return;
       }
 
-      showMessage("");
-      goToConfirmPage("/payment/paypal/payment-paypal-confirm.html");
+      issueOrderToken(paypalPayload).then(function(token) {
+        paypalPayload.order_token = token;
+        if (!saveOrderData("paypalOrderData", paypalPayload)) {
+          showMessage("ブラウザの設定により注文内容の確認画面へ進めません。", true);
+          return;
+        }
+        showMessage("");
+        goToConfirmPage("/payment/paypal/payment-paypal-confirm.html");
+      }).catch(function() {
+        showMessage("注文の確認準備に失敗しました。時間をおいて再度お試しください。", true);
+      });
     }
   });
 })();

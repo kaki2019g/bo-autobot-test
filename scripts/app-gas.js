@@ -7,6 +7,7 @@ const CONTACT_REPLY_SUBJECT = '【受付完了】お問い合わせありがと�
 const CONTACT_TIMEZONE = 'Asia/Tokyo';
 const CONTACT_REQUIRED_FIELDS = ['your-name', 'your-email', 'your-subject', 'your-message'];
 const LOG_VERBOSE = true;
+const ORDER_TOKEN_TTL_MS = 10 * 60 * 1000;
 
 // メンテナンス: 商品カタログとクーポンをスプレッドシートで管理する
 const PRODUCT_COLUMNS = {
@@ -44,6 +45,9 @@ function doPost(e) {
     }
     if (action === 'cancel_paypal') {
       return handlePaypalCancel_(params);
+    }
+    if (action === 'issue_token') {
+      return handleIssueToken_(params);
     }
 
     var payload = normalizeOrderPayload_(e);
@@ -254,6 +258,9 @@ function handleBankOrder_(payload) {
     return jsonResponse_({ ok: false, error: 'invalid_payment_method' });
   }
 
+  if (!verifyOrderToken_(payload)) {
+    return jsonResponse_({ ok: false, error: 'invalid_order_token' });
+  }
   validateOrderPayload_(payload);
   var pricing = resolvePricing_(payload);
   payload.product_id = pricing.product_id;
@@ -342,6 +349,9 @@ function handlePaypalCreateOrder_(payload) {
   logInfo_('handlePaypalCreateOrder start', summarizeOrderPayload_(payload));
   var config = getOrderConfig_();
   validateOrderPayload_(payload);
+  if (!verifyOrderToken_(payload)) {
+    return jsonResponse_({ ok: false, error: 'invalid_order_token' });
+  }
   var pricing = resolvePricing_(payload);
   payload.product_id = pricing.product_id;
   payload.product_name = pricing.product_name;
@@ -471,6 +481,7 @@ function normalizeOrderPayload_(e) {
       amount: Number(params.amount),
       currency: params.currency,
       coupon_code: params.coupon_code || '',
+      order_token: params.order_token || '',
       payment_method: params.payment_method,
       customer: {
         first_name: params.billing_first_name || '',
@@ -600,6 +611,90 @@ function sendBankTransferEmail_(config, customer) {
     '公式LINEにてお振込のご連絡をいただけますと、確認がスムーズです。\n\n' +
     'ご入金確認後、商品をお送りいたします。';
   GmailApp.sendEmail(customer.email, subject, body);
+}
+
+// 注文トークンを発行する。
+function handleIssueToken_(params) {
+  try {
+    var productId = params.product_id || '';
+    var couponCode = params.coupon_code || '';
+    var product = getProductById_(productId);
+    if (!product || !String(product[PRODUCT_COLUMNS.active]).match(/^(true|1|yes|active)$/i)) {
+      return jsonResponse_({ ok: false, error: 'product_inactive' });
+    }
+    var couponCheck = applyCoupon_(product, couponCode);
+    if (!couponCheck.ok) {
+      return jsonResponse_({ ok: false, error: couponCheck.error });
+    }
+    var token = issueOrderToken_(productId, couponCode);
+    return jsonResponse_({ ok: true, token: token });
+  } catch (err) {
+    logError_('handleIssueToken error', err);
+    return jsonResponse_({ ok: false, error: String(err) });
+  }
+}
+
+// 注文トークンを検証する。
+function verifyOrderToken_(payload) {
+  if (!payload || !payload.order_token) {
+    return false;
+  }
+  var secret = getOrderTokenSecret_();
+  if (!secret) {
+    logWarn_('verifyOrderToken missing secret', {});
+    return false;
+  }
+  var parts = String(payload.order_token).split('.');
+  if (parts.length !== 2) {
+    return false;
+  }
+  var payloadB64 = parts[0];
+  var sig = parts[1];
+  var expected = Utilities.base64EncodeWebSafe(
+    Utilities.computeHmacSha256Signature(payloadB64, secret)
+  );
+  if (expected !== sig) {
+    return false;
+  }
+  var decoded = Utilities.newBlob(Utilities.base64DecodeWebSafe(payloadB64)).getDataAsString();
+  var data = JSON.parse(decoded);
+  if (!data || !data.iat || !data.product_id) {
+    return false;
+  }
+  if (data.product_id !== payload.product_id) {
+    return false;
+  }
+  if (String(data.coupon_code || '') !== String(payload.coupon_code || '')) {
+    return false;
+  }
+  if (Date.now() - Number(data.iat) > ORDER_TOKEN_TTL_MS) {
+    return false;
+  }
+  return true;
+}
+
+// 注文トークンを生成する。
+function issueOrderToken_(productId, couponCode) {
+  var secret = getOrderTokenSecret_();
+  if (!secret) {
+    throw new Error('missing_order_token_secret');
+  }
+  var payload = JSON.stringify({
+    product_id: String(productId || ''),
+    coupon_code: String(couponCode || ''),
+    iat: Date.now()
+  });
+  var payloadB64 = Utilities.base64EncodeWebSafe(payload);
+  var sig = Utilities.base64EncodeWebSafe(
+    Utilities.computeHmacSha256Signature(payloadB64, secret)
+  );
+  return payloadB64 + '.' + sig;
+}
+
+// トークン署名の秘密鍵を取得する。
+function getOrderTokenSecret_() {
+  var props = PropertiesService.getScriptProperties();
+  return props.getProperty('ORDER_TOKEN_SECRET');
 }
 
 // 商品カタログシートを取得する。

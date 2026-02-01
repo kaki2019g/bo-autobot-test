@@ -1,5 +1,6 @@
 (function() {
   // メンテナンス: クーポンコードを確認画面に反映し、空欄時は非表示にする
+  // メンテナンス: 注文トークンをhiddenへ反映する
   // セッションデータを読み込み、PayPal注文作成の送信処理を行う。
   var form = document.querySelector('form.wpcf7-form');
   if (!form) {
@@ -34,6 +35,7 @@
     'billing_email',
     'order_comments',
     'coupon_code',
+    'order_token',
     'source'
   ];
   fields.forEach(function(name) {

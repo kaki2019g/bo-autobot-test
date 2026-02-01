@@ -1,5 +1,6 @@
 (function() {
   // メンテナンス: クーポンコードを確認画面に反映し、空欄時は非表示にする
+  // メンテナンス: 注文トークンをhiddenへ反映する
   // セッションデータを読み込み、銀行振込注文の送信処理を行う。
   // GitHub Pagesのベースパスを考慮して完了画面URLを解決する。
   var donePath = '/payment/bank/payment-bank-done.html';
@@ -39,6 +40,7 @@
     'billing_email',
     'order_comments',
     'coupon_code',
+    'order_token',
     'source'
   ];
   fields.forEach(function(name) {
