@@ -1,4 +1,5 @@
 (function() {
+  // メンテナンス: クーポンコードを確認画面に反映し、空欄時は非表示にする
   // セッションデータを読み込み、PayPal注文作成の送信処理を行う。
   var form = document.querySelector('form.wpcf7-form');
   if (!form) {
@@ -32,6 +33,7 @@
     'billing_last_name',
     'billing_email',
     'order_comments',
+    'coupon_code',
     'source'
   ];
   fields.forEach(function(name) {
@@ -54,6 +56,11 @@
       input.value = value;
     }
   });
+  var couponRow = document.querySelector('[data-row="coupon-code"]');
+  if (couponRow) {
+    var code = data && data.coupon_code ? data.coupon_code : '';
+    couponRow.style.display = code ? '' : 'none';
+  }
   // 顧客名の表示整形。
   var lastName = data && data.billing_last_name ? data.billing_last_name : '';
   var firstName = data && data.billing_first_name ? data.billing_first_name : '';

@@ -1,4 +1,5 @@
 (function() {
+  // メンテナンス: クーポンコードを確認画面に反映し、空欄時は非表示にする
   // セッションデータを読み込み、銀行振込注文の送信処理を行う。
   // GitHub Pagesのベースパスを考慮して完了画面URLを解決する。
   var donePath = '/payment/bank/payment-bank-done.html';
@@ -37,6 +38,7 @@
     'billing_last_name',
     'billing_email',
     'order_comments',
+    'coupon_code',
     'source'
   ];
   fields.forEach(function(name) {
@@ -56,6 +58,11 @@
       input.value = value;
     }
   });
+  var couponRow = document.querySelector('[data-row="coupon-code"]');
+  if (couponRow) {
+    var code = data && data.coupon_code ? data.coupon_code : '';
+    couponRow.style.display = code ? '' : 'none';
+  }
   // 顧客名の表示整形。
   var lastName = data && data.billing_last_name ? data.billing_last_name : '';
   var firstName = data && data.billing_first_name ? data.billing_first_name : '';

@@ -1,4 +1,5 @@
 ﻿(function() {
+  // メンテナンス: 商品情報とクーポンコードを注文ペイロードへまとめる
   // 支払い方法の選択と確認画面への遷移を制御する。
   var form = document.querySelector(".woocommerce-checkout");
   if (!form) {
@@ -17,7 +18,7 @@
       id: "bo-autobot-demo",
       name: "BO-AutoBot デモ版",
       amount: 10000,
-      title: "購入手続き（デモ版）"
+      title: "購入手続き"
     }
   };
   var params = new URLSearchParams(window.location.search);
@@ -87,6 +88,9 @@
     data.forEach(function(value, key) {
       payload[key] = value;
     });
+    if (!payload.coupon_code) {
+      payload.coupon_code = "";
+    }
     return payload;
   }
 

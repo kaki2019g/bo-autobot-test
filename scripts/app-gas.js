@@ -1,11 +1,26 @@
 const CONTACT_SPREADSHEET_ID = '1hhvEM7c2QVxjX7JiIQQI90vvc-bdY1_UOIaCcOo-B5Q';
 const CONTACT_SHEET_NAME = 'inquiries';
 const CONTACT_ADMIN_EMAIL = 'kaki2019g@gmail.com';
+const PRODUCT_SHEET_NAME = 'products';
 const CONTACT_REPLY_FROM_NAME = 'bo-autobot';
 const CONTACT_REPLY_SUBJECT = '【受付完了】お問い合わせありがとうございます（受付番号: {id}）';
 const CONTACT_TIMEZONE = 'Asia/Tokyo';
 const CONTACT_REQUIRED_FIELDS = ['your-name', 'your-email', 'your-subject', 'your-message'];
 const LOG_VERBOSE = true;
+
+// メンテナンス: 商品カタログとクーポンをスプレッドシートで管理する
+const PRODUCT_COLUMNS = {
+  product_id: 'product_id',
+  product_name: 'product_name',
+  price: 'price',
+  currency: 'currency',
+  active: 'active',
+  coupon_code: 'coupon_code',
+  discount_type: 'discount_type',
+  discount_value: 'discount_value',
+  valid_from: 'valid_from',
+  valid_to: 'valid_to'
+};
 
 // POSTリクエストの入口。Webhook/問い合わせ/注文処理へ分岐する。
 function doPost(e) {
@@ -240,6 +255,11 @@ function handleBankOrder_(payload) {
   }
 
   validateOrderPayload_(payload);
+  var pricing = resolvePricing_(payload);
+  payload.product_id = pricing.product_id;
+  payload.product_name = pricing.product_name;
+  payload.amount = pricing.amount;
+  payload.currency = pricing.currency;
   var config = getOrderConfig_();
   var orderId = Utilities.getUuid();
   var now = new Date();
@@ -322,6 +342,11 @@ function handlePaypalCreateOrder_(payload) {
   logInfo_('handlePaypalCreateOrder start', summarizeOrderPayload_(payload));
   var config = getOrderConfig_();
   validateOrderPayload_(payload);
+  var pricing = resolvePricing_(payload);
+  payload.product_id = pricing.product_id;
+  payload.product_name = pricing.product_name;
+  payload.amount = pricing.amount;
+  payload.currency = pricing.currency;
 
   if (payload.payment_method !== 'paypal') {
     logWarn_('handlePaypalCreateOrder invalid payment method', { payment_method: payload.payment_method });
@@ -445,6 +470,7 @@ function normalizeOrderPayload_(e) {
       product_name: params.product_name,
       amount: Number(params.amount),
       currency: params.currency,
+      coupon_code: params.coupon_code || '',
       payment_method: params.payment_method,
       customer: {
         first_name: params.billing_first_name || '',
@@ -477,6 +503,10 @@ function validateOrderPayload_(payload) {
   if (!payload.customer.first_name || !payload.customer.last_name || !payload.customer.email) {
     logWarn_('validateOrderPayload missing customer', {});
     throw new Error('missing_customer');
+  }
+  if (!payload.product_id) {
+    logWarn_('validateOrderPayload missing product', {});
+    throw new Error('missing_product');
   }
 }
 
@@ -570,6 +600,99 @@ function sendBankTransferEmail_(config, customer) {
     '公式LINEにてお振込のご連絡をいただけますと、確認がスムーズです。\n\n' +
     'ご入金確認後、商品をお送りいたします。';
   GmailApp.sendEmail(customer.email, subject, body);
+}
+
+// 商品カタログシートを取得する。
+function getProductSheet_() {
+  var ss = SpreadsheetApp.openById(getOrderConfig_().SHEET_ID);
+  return ss.getSheetByName(PRODUCT_SHEET_NAME);
+}
+
+// 商品カタログの1行を読み取る。
+function getProductById_(productId) {
+  var sheet = getProductSheet_();
+  if (!sheet) {
+    throw new Error('product_sheet_not_found');
+  }
+  var values = sheet.getDataRange().getValues();
+  if (values.length < 2) {
+    throw new Error('product_empty');
+  }
+  var header = values[0];
+  var idIndex = header.indexOf(PRODUCT_COLUMNS.product_id);
+  if (idIndex === -1) {
+    throw new Error('product_header_invalid');
+  }
+  for (var i = 1; i < values.length; i++) {
+    if (String(values[i][idIndex]) === String(productId)) {
+      return mapProductRow_(header, values[i]);
+    }
+  }
+  return null;
+}
+
+// 商品行をオブジェクトへマッピングする。
+function mapProductRow_(header, row) {
+  var obj = {};
+  for (var i = 0; i < header.length; i++) {
+    obj[header[i]] = row[i];
+  }
+  return obj;
+}
+
+// クーポン適用後の金額を算出する。
+function applyCoupon_(product, couponCode) {
+  var price = Number(product[PRODUCT_COLUMNS.price]);
+  if (!couponCode) {
+    return { ok: true, amount: price, coupon_applied: false };
+  }
+  var code = String(couponCode || '').trim().toLowerCase();
+  var productCode = String(product[PRODUCT_COLUMNS.coupon_code] || '').trim().toLowerCase();
+  if (!productCode || productCode !== code) {
+    return { ok: false, error: 'invalid_coupon' };
+  }
+
+  var type = String(product[PRODUCT_COLUMNS.discount_type] || '').trim();
+  var value = Number(product[PRODUCT_COLUMNS.discount_value] || 0);
+  var now = new Date();
+  var validFrom = product[PRODUCT_COLUMNS.valid_from] ? new Date(product[PRODUCT_COLUMNS.valid_from]) : null;
+  var validTo = product[PRODUCT_COLUMNS.valid_to] ? new Date(product[PRODUCT_COLUMNS.valid_to]) : null;
+  if (validFrom && now < validFrom) {
+    return { ok: false, error: 'coupon_not_started' };
+  }
+  if (validTo && now > validTo) {
+    return { ok: false, error: 'coupon_expired' };
+  }
+  if (type === 'percent') {
+    var percent = Math.max(0, Math.min(100, value));
+    return { ok: true, amount: Math.max(0, Math.floor(price * (100 - percent) / 100)), coupon_applied: true };
+  }
+  if (type === 'fixed') {
+    return { ok: true, amount: Math.max(0, price - value), coupon_applied: true };
+  }
+  return { ok: false, error: 'invalid_discount_type' };
+}
+
+// 商品カタログを参照して価格/通貨を確定する。
+function resolvePricing_(payload) {
+  var product = getProductById_(payload.product_id);
+  if (!product) {
+    throw new Error('product_not_found');
+  }
+  if (!String(product[PRODUCT_COLUMNS.active]).match(/^(true|1|yes|active)$/i)) {
+    throw new Error('product_inactive');
+  }
+  var result = applyCoupon_(product, payload.coupon_code || '');
+  if (!result.ok) {
+    throw new Error(result.error);
+  }
+  return {
+    product_id: String(product[PRODUCT_COLUMNS.product_id]),
+    product_name: String(product[PRODUCT_COLUMNS.product_name]),
+    amount: Number(result.amount),
+    currency: String(product[PRODUCT_COLUMNS.currency] || 'JPY'),
+    coupon_applied: !!result.coupon_applied
+  };
 }
 
 // PayPalの注文作成APIを呼び出す。
