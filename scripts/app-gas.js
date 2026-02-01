@@ -842,8 +842,8 @@ function getPayPalAccessToken_(config) {
 // PayPal環境に応じたAPIベースURLを返す。
 function getPayPalApiBase_(config) {
   return config.PAYPAL_ENV === 'sandbox'
-    ? 'https://api-m.paypal.com'
-    : 'https://api-m.sandbox.paypal.com';
+    ? 'https://api-m.sandbox.paypal.com'
+    : 'https://api-m.paypal.com';
 }
 
 // WebhookイベントからPayPal注文IDを抽出する。
